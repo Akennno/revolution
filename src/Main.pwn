@@ -1,3 +1,6 @@
+#pragma warning push
+#pragma warning disable 239
+
 #include <a_samp> // This MUST be include for SA:MP.
 
 #if defined MAX_PLAYERS
@@ -11,6 +14,10 @@
     #define MAX_VEHICLES	1801 // 1800 Max vehicle's id
 #else
     #define MAX_VEHICLES    1801
+#endif
+
+#if !defined IsValidVehicle
+    native IsValidVehicle(vehicleid);
 #endif
 
 #define SERVER_NAME         "RevolutionMP"
@@ -68,8 +75,9 @@ public OnGameModeInit()
     new MySQLOpt:options = mysql_init_options();
     mysql_set_option(options, POOL_SIZE, 5);
     Database = mysql_connect_file();
-    mysql_log(ALL);
-
+    #if defined DEBUG_MODE
+        mysql_log(ALL);
+    #endif
     if (mysql_errno(Database) != 0)
     {
         printf("[MySQL] Couldn't connect to the database (%d).", mysql_errno(Database));
@@ -86,7 +94,7 @@ public OnGameModeInit()
         ShowPlayerMarkers(false);
         ShowNameTags(false);
         /* Manual Vehicle Engine and Lights */
-        //ManualVehicleEngineAndLights(); // <--
+        ManualVehicleEngineAndLights(); 
         SetNameTagDrawDistance(21.0);
         EnableStuntBonusForAll(false);
 
@@ -163,14 +171,10 @@ public e_COMMAND_ERRORS:OnPlayerCommandReceived(playerid, cmdtext[], e_COMMAND_E
     return COMMAND_OK;
 }
 
-public OnPlayerCommandPerformed(playerid, cmdtext[], success)
+public e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND_ERRORS:success)
 {
-    new size_names[MAX_PLAYER_NAME]
-    	;
-    GetPlayerName(playerid, size_names, sizeof(size_names));
-    printf("[COMMAND] %s: %s", size_names, cmdtext);
-    
-    /* not connected */
-    if (!IsPlayerConnected(playerid)) return 0;
-    return 1;
+    #if defined DEBUG_MODE
+        printf("CMD: \'/%s\' called by player %s", cmdtext, ReturnPlayerName(playerid));
+    #endif
+    return COMMAND_OK;
 }

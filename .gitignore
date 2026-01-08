@@ -19,6 +19,11 @@ pawn.lock
 gamemodes/
 filterscripts/
 databases/
+scriptfiles/
+pawno/ 
+npcmodes/
+models/
+include/
 
 # compiled settings file
 # keep `samp.json` file on version control
@@ -51,6 +56,8 @@ samp.ban
 #
 # Common files
 #
-
+samp-license.txt
+server-readme.txt
 *.sublime-workspace
-!.vscode/pawnc/lib/libpawnc.so
+*.vscode
+.zed/
