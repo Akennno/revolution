@@ -180,8 +180,9 @@ public LoadCharacter(playerid, idx, check)
         SetPlayerName(playerid, PlayerCharInfo[playerid][Nickname]);
         SetPlayerScore(playerid, PlayerCharInfo[playerid][Level]);
         SetPlayerColor(playerid, X11_WHITE);
-        if (!PlayerCharInfo[playerid][TimePlayed])
+        if (PlayerCharInfo[playerid][LastLogin] == 0)
         {
+            // respawn buat player baru.
             PlayerCharInfo[playerid][Skin] = 299;
             SetSpawnInfo(playerid, NO_TEAM, PlayerCharInfo[playerid][Skin], 1759.0189, -1898.1260, 13.5622, 266.4503, 0, 0, 0, 0, 0, 0);
             SetPlayerVirtualWorld(playerid, 0);

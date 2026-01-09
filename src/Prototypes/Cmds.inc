@@ -1,7 +1,7 @@
 @cmd() savestatic(playerid, params[], help)
 {
     new vehicleid;
-    if (sscanf(params, "d", vehicleid)) return SendErrorMessage(playerid, "USAGE: /savestatic [vehicleid]");
+    if(sscanf(params, "d", vehicleid)) return SendErrorMessage(playerid, "USAGE: /savestatic [vehicleid]");
     if (!IsValidVehicle(vehicleid)) return SendErrorMessage(playerid, "ERROR: invalid vehicle id");
     SaveStaticVehicle(vehicleid);
     return 1;
@@ -40,14 +40,29 @@
 @cmd() dspawn(playerid, params[], help)
 {
     new vehicleid;
-    if (sscanf(params, "d", vehicleid)) return SendErrorMessage(playerid, "USAGE: /dspawn [vid]");
+    if(sscanf(params, "d", vehicleid)) return SendErrorMessage(playerid, "USAGE: /dspawn [vid]");
     UnloadVehicle(vehicleid);
     return 1;
 }
 
-@cmd() cc(playerid, params[], help)
+@cmd(.alts = {"cc"}) clearchat(playerid, params[], help)
 {
-    forex(i,20)
+    new value_clear;
+    sscanf(params, "D(20)", value_clear);
+        
+    forex(i, value_clear)
         SendClientMessage(playerid, -1, " ");
+        
+    return 1;
+}
+
+@cmd() levels(playerid, params[], help)
+{
+    va_SendClientMessage(
+        playerid,
+        X11_SKYBLUE,
+        "LEVEL: {FFFFFF}Curent Level: %d\nCurrent Progress: %d/%d",
+        PlayerCharInfo[playerid][TimeHours], PlayerCharInfo[playerid][LevelPoint]
+    );
     return 1;
 }

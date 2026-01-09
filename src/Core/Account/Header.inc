@@ -18,8 +18,10 @@ enum E_CHARACTER_DATA
     Nickname[20],
     CreatedDate,
     LastLogin,
-    TimePlayed,
+    TimeMinutes,
+    TimeHours,
     Level,
+    LevelPoint,
     bool:Gender,
     BirthDate,
     Origin[32],
@@ -39,5 +41,5 @@ enum E_CHARACTER_DATA
     Float:PosA
 }
 
-new PlayerAccountInfo[MAX_PLAYERS][E_ACCOUNT_DATA];
 new PlayerCharInfo[MAX_PLAYERS][E_CHARACTER_DATA];
+new PlayerAccountInfo[MAX_PLAYERS][E_ACCOUNT_DATA];

@@ -1,10 +1,25 @@
+#pragma warning push
+#pragma warning disable 239
+
 #include <a_samp> // This MUST be include for SA:MP.
 
-#undef MAX_PLAYERS
-#undef MAX_VEHICLES
+#if defined MAX_PLAYERS
+    #undef MAX_PLAYERS
+    #define MAX_PLAYERS	100 // 100 Max player's id
+#else
+    #define MAX_PLAYERS    100
+#endif
+#if defined MAX_VEHICLES
+    #undef MAX_VEHICLES
+    #define MAX_VEHICLES	1801 // 1800 Max vehicle's id
+#else
+    #define MAX_VEHICLES    1801
+#endif
 
-#define MAX_PLAYERS		100 // 100 Max player's id
-#define MAX_VEHICLES	1801 // 1800 Max vehicle's id
+#if !defined IsValidVehicle
+    native IsValidVehicle(vehicleid);
+#endif
+
 
 #define SERVER_NAME         "RevolutionMP"
 #define SERVER_NAME_SHORT   "R:MP"
@@ -23,7 +38,6 @@
 #include <streamer> // This plugin streams objects, pickups, checkpoints, race checkpoints, map icons, 3D text labels, and actors at user-defined server ticks.
 #include <YSI_Coding\y_va> // Provides ___, a companion to ..., which passes all variable parameters to another function instead of receiving them.
 #include <YSI_Coding\y_timers> // Wraps SetTimer and SetTimerEx to give compile-time parameter type checks.
-#include <YSI_Coding\y_hooks> // Provides language syntax and support for 'hooking' functions. Allowing you to intercept them, or use the same callback in multiple files at once.
 #include <YSI_Data\y_iterate> // The latest version of foreach with many extras for iterators and special iterators.
 #include <YSI_Server\y_colours> // Provides many functions for manipulating colours, as well as several thousand pre-defined named colours
 #include <YSI_Visual\y_commands> // The most fully featured command processor for SA:MP.
@@ -40,18 +54,20 @@
 #include <nex-ac_en.lang>
 #include <nex-ac> // Nex Anticheat (Nex-AC) - is a comprehensive protection which combines powerful anticheat and protection against various attacks (flood, DoS).
 
-#include "Utils/Global"
-#include "Utils/AntiCheat"
-#include "Core/Entry"
-#include "Modules/VehicleCmds"
-#include "Modules/VoiceCmds"
-#include "Prototypes/Cmds"
+#include "../src/Utils/Global"
+#include "../src/Utils/AntiCheat"
+#include "../src/Core/Entry"
+#include "../src/Modules/VehicleCmds"
+#include "../src/Modules/VoiceCmds"
+#include "../src/Modules/Leveling"
+#include "../src/Prototypes/Cmds"
 
 // Temporary Unused Function
 #pragma unused GetPlayerOwnVehicle
 #pragma unused SavePlayerOwnVehicle
 #pragma unused CreateOnDemandVehicle
 #pragma unused CreateTemporaryVehicle
+
 
 main() {}
 
@@ -61,8 +77,9 @@ public OnGameModeInit()
     new MySQLOpt:options = mysql_init_options();
     mysql_set_option(options, POOL_SIZE, 5);
     Database = mysql_connect_file();
-    mysql_log(ALL);
-
+    #if defined DEBUG_MODE
+        mysql_log(ALL);
+    #endif
     if (mysql_errno(Database) != 0)
     {
         printf("[MySQL] Couldn't connect to the database (%d).", mysql_errno(Database));
@@ -78,7 +95,8 @@ public OnGameModeInit()
         EnableVehicleFriendlyFire();
         ShowPlayerMarkers(false);
         ShowNameTags(false);
-        //ManualVehicleEngineAndLights();
+        /* Manual Vehicle Engine and Lights */
+        ManualVehicleEngineAndLights(); 
         SetNameTagDrawDistance(21.0);
         EnableStuntBonusForAll(false);
 
@@ -105,6 +123,13 @@ public OnGameModeExit()
     DestroyAllDynamicObjects();
     DestroyAllDynamicPickups();
     DestroyAllDynamicRaceCPs();
+	for (new i = 0, j = GetPlayerPoolSize(); i <= j; i++) 
+	{
+		if (IsPlayerConnected(i))
+		{
+			OnPlayerDisconnect(i, 1);
+		}
+	}
     mysql_close(Database);
 	return 1;
 }
@@ -145,5 +170,13 @@ public e_COMMAND_ERRORS:OnPlayerCommandReceived(playerid, cmdtext[], e_COMMAND_E
 {
     if (success == COMMAND_UNDEFINED)
         SendErrorMessage(playerid, "ERROR: Unknown command, see '/help' for a few commands information.");
+    return COMMAND_OK;
+}
+
+public e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND_ERRORS:success)
+{
+    #if defined DEBUG_MODE
+        printf("CMD: \'/%s\' called by player %s", cmdtext, ReturnPlayerName(playerid));
+    #endif
     return COMMAND_OK;
 }

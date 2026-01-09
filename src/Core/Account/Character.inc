@@ -4,7 +4,6 @@
 {
     if (PlayerLogged[playerid])
     {
-        PlayerCharInfo[playerid][TimePlayed]++;
         PlayerAccountInfo[playerid][TimePlayed]++;
     }
     return 1;
@@ -19,8 +18,10 @@ ORM:CreateCharORM(playerid, bool:factionid=true)
     orm_addvar_string(ormid, PlayerCharInfo[playerid][Nickname], 20, "Nickname");
     orm_addvar_int(ormid, PlayerCharInfo[playerid][CreatedDate], "CreatedDate");
     orm_addvar_int(ormid, PlayerCharInfo[playerid][LastLogin], "LastLogin");
-    orm_addvar_int(ormid, PlayerCharInfo[playerid][TimePlayed], "TimePlayed");
+    orm_addvar_int(ormid, PlayerCharInfo[playerid][TimeMinutes], "TimeMinutes");
+    orm_addvar_int(ormid, PlayerCharInfo[playerid][TimeHours], "TimeHours");
     orm_addvar_int(ormid, PlayerCharInfo[playerid][Level], "Level");
+    orm_addvar_int(ormid, PlayerCharInfo[playerid][LevelPoint], "LevelPoint");
     orm_addvar_int(ormid, PlayerCharInfo[playerid][Gender], "Gender");
     orm_addvar_int(ormid, PlayerCharInfo[playerid][BirthDate], "BirthDate");
     orm_addvar_string(ormid, PlayerCharInfo[playerid][Origin], 20, "Origin");
